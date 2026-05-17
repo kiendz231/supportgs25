@@ -309,6 +309,19 @@ function navigateTo(page) {
   // Activate nav items
   $$(`[data-page="${page}"]`).forEach(el => el.classList.add('active'));
 
+  // Update bottom nav sliding indicator
+  const bottomNav = $('#bottom-nav');
+  if (bottomNav) {
+    const activeItem = bottomNav.querySelector(`[data-page="${page}"]`);
+    if (activeItem) {
+      const items = Array.from(bottomNav.querySelectorAll('.bn-item'));
+      const index = items.indexOf(activeItem);
+      if (index !== -1) {
+        bottomNav.style.setProperty('--active-index', index);
+      }
+    }
+  }
+
   // Update title
   const titleEl = $('#page-title');
   if (titleEl) titleEl.textContent = PAGE_TITLES[page] || page;
