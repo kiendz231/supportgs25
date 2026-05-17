@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>GS25 Staff Hub - Quản lý nhân sự chuyên nghiệp</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#1a2235">
+    <link rel="apple-touch-icon" href="pwa-icon-192.png">
+</head>
+<body>
+    <div id="auth-screen" class="auth-screen">
+        <div class="auth-card">
+            <div class="auth-glow"></div>
+            <img src="logo.png" alt="GS25" class="auth-logo">
+            <h1>Staff Hub</h1>
+            <p class="auth-subtitle">Nền tảng quản lý nhân sự GS25</p>
+            <div class="auth-form active">
+                <div class="form-field">
+                    <label>Mã nhân viên</label>
+                    <input type="text" id="login-id" placeholder="Nhập mã NV..." autocomplete="username" class="form-input">
+                </div>
+                <div class="form-field">
+                    <label>Mật khẩu</label>
+                    <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" class="form-input">
+                </div>
+                <button class="btn btn-primary btn-full btn-lg" id="btn-login">Đăng nhập</button>
+            </div>
+            <div class="auth-error hidden" id="auth-error"></div>
+            <p class="auth-hint">Liên hệ quản lý để được cấp tài khoản</p>
+        </div>
+    </div>
+
+    <div id="app" class="app hidden">
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <img src="logo.png" alt="GS25" class="sidebar-logo">
+                <span class="sidebar-brand">GS25 Hub</span>
+                <button id="sidebar-close" class="sidebar-close" aria-label="Đóng menu">✕</button>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" data-page="dashboard" id="nav-dashboard">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Tổng quan</span>
+                </a>
+                <a href="#" class="nav-item" data-page="schedule" id="nav-schedule">
+                    <span class="nav-icon">📅</span>
+                    <span class="nav-label">Lịch Làm Việc</span>
+                </a>
+                <a href="#" class="nav-item" data-page="salary" id="nav-salary">
+                    <span class="nav-icon">💰</span>
+                    <span class="nav-label">Thu Nhập</span>
+                </a>
+                <a href="#" class="nav-item" data-page="tools" id="nav-tools">
+                    <span class="nav-icon">🔍</span>
+                    <span class="nav-label">Kiểm Date</span>
+                </a>
+                <a href="#" class="nav-item" data-page="profile" id="nav-profile">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-label">Hồ Sơ Cá Nhân</span>
+                </a>
+                <div class="nav-divider"></div>
+                <a href="#" class="nav-item nav-admin" data-page="admin" id="nav-admin">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-label">Admin Panel</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-profile" id="user-profile">
+                    <div class="user-avatar" id="user-avatar">?</div>
+                    <div class="user-detail">
+                        <span class="user-name" id="user-name">--</span>
+                        <span class="user-store" id="user-store">--</span>
+                    </div>
+                    <button class="btn-logout" id="btn-logout" title="Đăng xuất">🚪</button>
+                </div>
+                <div class="shift-info">
+                    <span class="shift-icon">⏰</span>
+                    <div class="shift-detail">
+                        <span class="shift-label">Ca hiện tại</span>
+                        <span class="shift-time" id="current-shift">--</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+        <nav class="bottom-nav" id="bottom-nav">
+            <a href="#" class="bn-item active" data-page="dashboard">
+                <span class="bn-icon">🏠</span>
+                <span class="bn-label">Tổng quan</span>
+            </a>
+            <a href="#" class="bn-item" data-page="schedule">
+                <span class="bn-icon">📅</span>
+                <span class="bn-label">Lịch</span>
+            </a>
+            <a href="#" class="bn-item" data-page="salary">
+                <span class="bn-icon">💰</span>
+                <span class="bn-label">Thu nhập</span>
+            </a>
+            <a href="#" class="bn-item" data-page="tools">
+                <span class="bn-icon">🔍</span>
+                <span class="bn-label">Kiểm date</span>
+            </a>
+            <a href="#" class="bn-item" data-page="profile">
+                <span class="bn-icon">👤</span>
+                <span class="bn-label">Cá nhân</span>
+            </a>
+        </nav>
+
+        <main class="main-content">
+            <header class="topbar">
+                <button id="menu-toggle" class="menu-toggle" aria-label="Mở menu">
+                    <span></span><span></span><span></span>
+                </button>
+                <div class="topbar-info">
+                    <h2 class="page-title" id="page-title">Tổng quan</h2>
+                </div>
+                <div class="topbar-right">
+                    <button class="install-app-btn hidden" id="btn-install-app" title="Cài app">📲 Cài app</button>
+                    <span class="live-clock" id="live-clock">--:--:--</span>
+                    <span class="date-display" id="date-display">--</span>
+                </div>
+            </header>
+
+            <div class="page-container">
+                <section id="page-dashboard" class="page active">
+                    <div class="welcome-section">
+                        <div class="welcome-text">
+                            <h2 id="personal-greeting">Chào buổi sáng, --!</h2>
+                            <p id="welcome-sub">Hôm nay trông bạn thật năng lượng ✨</p>
+                        </div>
+                        <div class="dashboard-widgets">
+                            <div class="dash-widget widget-weather" id="widget-weather">
+                                <span class="widget-icon" id="weather-icon">☁️</span>
+                                <div class="widget-info">
+                                    <span class="widget-label" id="weather-temp">--°C • TP.HCM</span>
+                                    <span class="widget-value" id="weather-desc">Đang cập nhật...</span>
+                                </div>
+                            </div>
+                            <div class="dash-widget widget-payday">
+                                <span class="widget-icon">🗓️</span>
+                                <div class="widget-info">
+                                    <span class="widget-label">Ngày nhận lương</span>
+                                    <span class="widget-value" id="payday-countdown">Còn -- ngày</span>
+                                </div>
+                            </div>
+                            <div class="dash-widget widget-streak" id="widget-streak-trigger" style="cursor: pointer;" title="Xem chi tiết chuỗi đi làm">
+                                <span class="widget-icon">🔥</span>
+                                <div class="widget-info">
+                                    <span class="widget-label">Chuỗi Streak</span>
+                                    <span class="widget-value" id="streak-countdown">0 ngày</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quote-card" id="daily-quote-card">
+                        <span class="quote-icon">💡</span>
+                        <p class="quote-text" id="daily-quote">"Sự kiên trì là chìa khóa của thành công."</p>
+                    </div>
+
+                    <div class="dashboard-stats" id="dashboard-stats-area">
+                        <div class="stats-grid">
+                            <div class="stat-card stat-blue">
+                                <div class="stat-icon">⏱️</div>
+                                <div class="stat-info">
+                                    <span class="stat-value" id="stat-shift-time">--:--</span>
+                                    <span class="stat-label">Thời gian ca còn lại</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="page-schedule" class="page">
+                    <div class="page-header">
+                        <h2>Lịch Làm Việc</h2>
+                        <div class="week-nav-controls">
+                            <button class="btn btn-secondary btn-sm" id="btn-week-prev">◀</button>
+                            <button class="btn btn-secondary btn-sm" id="btn-week-today">Tuần này</button>
+                            <button class="btn btn-secondary btn-sm" id="btn-week-next">▶</button>
+                        </div>
+                        <button class="btn btn-primary btn-sm" id="btn-open-register" style="margin-left:auto">📝 Đăng ký tuần sau</button>
+                    </div>
+                    <div id="schedule-container">
+                        <!-- Populated by JS -->
+                    </div>
+                </section>
+
+                <section id="page-salary" class="page">
+                    <div class="page-header">
+                        <h2>💰 Ước Tính Thu Nhập</h2>
+                    </div>
+                    <div class="salary-period-banner" id="salary-period-banner">
+                        <span class="salary-period-icon">📆</span>
+                        <div class="salary-period-info">
+                            <span class="salary-period-label">Kỳ lương hiện tại</span>
+                            <strong id="salary-period-range">26/-- → 25/--</strong>
+                        </div>
+                        <div class="salary-period-days">
+                            <span class="salary-period-days-num" id="salary-days-worked">0</span>
+                            <span class="salary-period-days-label">ngày<br>đã làm</span>
+                        </div>
+                    </div>
+                    <div class="salary-overview">
+                        <div class="salary-main-card">
+                            <div class="salary-main-info">
+                                <span class="salary-main-label">Lương tích lũy đến hôm nay</span>
+                                <span class="salary-main-value" id="salary-total">0 ₫</span>
+                                <span class="salary-main-sub" id="salary-period">Tính đến --/--/----</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="salary-grid">
+                        <div class="salary-card">
+                            <div class="salary-card-icon salary-icon-base">🕐</div>
+                            <div class="salary-card-body">
+                                <span class="salary-card-label">Ca 1 & Ca 2</span>
+                                <span class="salary-card-value" id="salary-base">0 ₫</span>
+                                <span class="salary-card-sub" id="salary-base-hours">0 giờ × 25.500 ₫/h</span>
+                            </div>
+                        </div>
+                        <div class="salary-card">
+                            <div class="salary-card-icon salary-icon-night">🌙</div>
+                            <div class="salary-card-body">
+                                <span class="salary-card-label">Ca 3 (đêm +30%)</span>
+                                <span class="salary-card-value" id="salary-night">0 ₫</span>
+                                <span class="salary-card-sub" id="salary-night-hours">0 giờ × 33.150 ₫/h</span>
+                            </div>
+                        </div>
+                        <div class="salary-card salary-card-holiday">
+                            <div class="salary-card-icon salary-icon-holiday">🎌</div>
+                            <div class="salary-card-body">
+                                <span class="salary-card-label">Ngày lễ (×3 / ×3.9)</span>
+                                <span class="salary-card-value" id="salary-holiday">0 ₫</span>
+                                <span class="salary-card-sub" id="salary-holiday-hours">0 ngày lễ trong kỳ</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shift Detail Log -->
+                    <div class="salary-detail-section">
+                        <div class="salary-detail-header">
+                            <h3>📋 Chi tiết ca làm việc trong kỳ</h3>
+                        </div>
+                        <div class="schedule-table-wrap">
+                            <table class="admin-table" id="salary-detail-table">
+                                <thead>
+                                    <tr>
+                                        <th>Ngày</th>
+                                        <th>Thứ</th>
+                                        <th>Ca làm</th>
+                                        <th>Giờ</th>
+                                        <th>Loại</th>
+                                        <th>Thu nhập</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="salary-detail-body">
+                                    <tr><td colspan="6" style="text-align:center;padding:30px;color:var(--text3)">Đang tải...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="page-tools" class="page">
+                    <div class="page-header">
+                        <h2>🔍 Kiểm Date (Hủy Hàng)</h2>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <p style="color: var(--text2); font-size: 0.92rem; margin-bottom: 24px; line-height: 1.6;">
+                            Nhập <b>Ngày Sản Xuất (NSX)</b> và <b>Hạn Sử Dụng (HSD)</b> của sản phẩm hàng GM. Hệ thống sẽ tự động tính toán thời gian hủy theo đúng quy định đảm bảo chất lượng của GS25.
+                        </p>
+                        
+                        <div class="tool-form-grid">
+                            <div class="tool-input-wrap">
+                                <label><i class="fa-regular fa-calendar-plus" style="margin-right: 6px; color: var(--green);"></i> Ngày Sản Xuất (NSX)</label>
+                                <input type="date" id="tool-nsx" class="tool-input-field">
+                            </div>
+                            <div class="tool-input-wrap">
+                                <label><i class="fa-regular fa-calendar-minus" style="margin-right: 6px; color: var(--red);"></i> Hạn Sử Dụng (HSD)</label>
+                                <input type="date" id="tool-hsd" class="tool-input-field">
+                            </div>
+                        </div>
+                        
+                        <button class="btn-gradient" id="btn-calc-date">
+                            <i class="fa-solid fa-magnifying-glass-chart"></i> Kiểm Tra Hạn Hủy
+                        </button>
+
+                        <!-- Premium Result Dashboard -->
+                        <div id="tool-date-result" class="result-board hidden">
+                            <div class="result-header">
+                                <h3 class="result-title">
+                                    <i class="fa-solid fa-square-poll-vertical" style="color: var(--blue);"></i> Báo Cáo Phân Tích Date
+                                </h3>
+                                <span class="status-indicator status-safe" id="res-status-badge">Chưa xác định</span>
+                            </div>
+                            
+                            <div class="result-grid">
+                                <div class="result-item">
+                                    <span class="result-item-label">Tổng Tuổi Thọ Sản Phẩm</span>
+                                    <div class="result-item-value" id="res-shelf-life">--</div>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-item-label">Thời Gian Hủy Quy Định</span>
+                                    <div class="result-item-value" id="res-rule" style="color: var(--yellow);">--</div>
+                                </div>
+                                
+                                <div class="result-highlight-card" id="res-highlight-container">
+                                    <div class="highlight-icon-wrap" id="res-highlight-icon">
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+                                    </div>
+                                    <div class="highlight-info">
+                                        <span class="highlight-label" id="res-highlight-label">Hạn chót gỡ hàng trưng bày</span>
+                                        <div class="highlight-value" id="res-deadline">--</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="shelf-life-progress">
+                                <div class="progress-meta">
+                                    <span>Tình trạng vòng đời sản phẩm:</span>
+                                    <span id="res-progress-percent" style="font-weight: 700;">0%</span>
+                                </div>
+                                <div class="progress-bar" style="margin-bottom: 0;">
+                                    <div class="progress-fill" id="res-progress-fill" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="page-profile" class="page">
+                    <div class="page-header">
+                        <h2>👤 Hồ Sơ Cá Nhân</h2>
+                    </div>
+
+                    <div class="profile-layout-grid">
+                        <!-- Left Panel: Avatar & Core Details -->
+                        <div class="tool-card" style="text-align: center; padding: 30px 20px;">
+                            <div style="position: relative; display: inline-block; margin-bottom: 16px;">
+                                <div id="profile-avatar-display" class="user-avatar-large" style="width: 90px; height: 90px; border-radius: 50%; font-size: 2.5rem; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--green), var(--purple)); color: #fff; margin: 0 auto; box-shadow: 0 0 20px rgba(99, 102, 241, 0.4); font-weight: 800; text-transform: uppercase;">
+                                    ?
+                                </div>
+                                <button id="btn-change-avatar" style="position: absolute; bottom: 0; right: 0; background: var(--green); border: none; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: #fff; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.3);" title="Chọn Avatar">
+                                    ✏️
+                                </button>
+                            </div>
+                            
+                            <h3 id="profile-full-name" style="margin: 0 0 4px; font-size: 1.2rem; font-weight: 700; color: #fff;">Đang tải...</h3>
+                            <span id="profile-position" class="status-indicator status-safe" style="font-size: 0.75rem; padding: 2px 10px; margin-bottom: 20px; display: inline-block;">Nhân viên</span>
+                            
+                            <div style="border-top: 1px solid rgba(255,255,255,0.06); margin-top: 15px; padding-top: 15px; text-align: left; display: grid; gap: 10px; font-size: 0.88rem;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: var(--text3);">Mã Nhân Viên:</span>
+                                    <strong id="profile-emp-id" style="color: #fff;">--</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: var(--text3);">Cửa Hàng:</span>
+                                    <strong id="profile-store-name" style="color: #fff;">--</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: var(--text3);">Quyền Hạn:</span>
+                                    <strong id="profile-role" style="color: var(--yellow);">--</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Edit Details & Preferences -->
+                        <div class="tool-card">
+                            <h3 style="margin: 0 0 20px; font-size: 1.1rem; color: var(--green); border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 10px;">
+                                ⚙️ Cá Nhân Hóa & Bảo Mật
+                            </h3>
+                            
+                            <div class="tool-form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                                <div class="tool-input-wrap">
+                                    <label>Biệt danh (Nickname)</label>
+                                    <input type="text" id="profile-nickname" class="tool-input-field" placeholder="Tên gọi thân mật trên bảng điều khiển">
+                                </div>
+                                <div class="tool-input-wrap">
+                                    <label>Số điện thoại</label>
+                                    <input type="tel" id="profile-phone" class="tool-input-field" placeholder="Ví dụ: 0987654321">
+                                </div>
+                                <div class="tool-input-wrap">
+                                    <label>Email liên hệ</label>
+                                    <input type="email" id="profile-email" class="tool-input-field" placeholder="example@gmail.com">
+                                </div>
+                                <div class="tool-input-wrap">
+                                    <label>Ngày sinh</label>
+                                    <input type="date" id="profile-dob" class="tool-input-field">
+                                </div>
+                            </div>
+
+                            <div class="tool-input-wrap" style="margin-bottom: 24px;">
+                                <label style="margin-bottom: 10px;">Chọn Tông Màu Chủ Đạo (Theme Color)</label>
+                                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                                    <div class="theme-option active" data-theme="gs25" style="width: 32px; height: 32px; border-radius: 50%; background: #3b82f6; cursor: pointer; border: 2px solid #fff; box-shadow: 0 0 10px rgba(59,130,246,0.5);"></div>
+                                    <div class="theme-option" data-theme="purple" style="width: 32px; height: 32px; border-radius: 50%; background: #a855f7; cursor: pointer; border: 2px solid transparent;"></div>
+                                    <div class="theme-option" data-theme="emerald" style="width: 32px; height: 32px; border-radius: 50%; background: #10b981; cursor: pointer; border: 2px solid transparent;"></div>
+                                    <div class="theme-option" data-theme="orange" style="width: 32px; height: 32px; border-radius: 50%; background: #f97316; cursor: pointer; border: 2px solid transparent;"></div>
+                                    <div class="theme-option" data-theme="pink" style="width: 32px; height: 32px; border-radius: 50%; background: #ec4899; cursor: pointer; border: 2px solid transparent;"></div>
+                                </div>
+                            </div>
+
+                            <button class="btn-gradient" id="btn-save-profile" style="max-width: 200px;">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Cập Nhật Hồ Sơ
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <div id="admin-dashboard" class="page">
+                    <div class="page-header">
+                        <h2>⚙️ Admin Panel</h2>
+                    </div>
+                    <div class="admin-tabs">
+                        <button class="admin-tab active" data-admin-tab="employees">👥 Nhân viên</button>
+                        <button class="admin-tab" data-admin-tab="schedule">📅 Lịch làm việc</button>
+                        <button class="admin-tab" data-admin-tab="requests">📩 Duyệt đăng ký</button>
+                        <button class="admin-tab" data-admin-tab="general">⚙️ Cài đặt chung</button>
+                    </div>
+                    <div class="admin-panel active" id="admin-panel-employees">
+                        <div class="admin-panel-header">
+                            <h3>Quản lý nhân viên (<span id="admin-emp-count">0</span>)</h3>
+                            <button class="btn btn-primary" id="btn-admin-add-emp">+ Thêm NV</button>
+                        </div>
+                        <div class="admin-table-wrap">
+                            <table class="admin-table" id="admin-emp-table"><thead><tr><th>Mã NV</th><th>Họ tên</th><th>Vị trí</th><th>Cửa hàng</th><th>Mật khẩu</th><th>Thao tác</th></tr></thead><tbody></tbody></table>
+                        </div>
+                    </div>
+                    <div class="admin-panel" id="admin-panel-requests">
+                        <div class="admin-panel-header">
+                            <h3>📩 Duyệt đăng ký ca làm (Tuần sau)</h3>
+                            <button class="btn btn-secondary btn-sm" id="btn-refresh-requests">🔄 Tải lại</button>
+                        </div>
+                        <div class="admin-table-wrap">
+                            <table class="admin-table" id="admin-requests-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nhân viên</th>
+                                        <th>Lịch đăng ký</th>
+                                        <th>Ngày gửi</th>
+                                        <th>Trạng thái</th>
+                                        <th>Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-requests-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="admin-panel" id="admin-panel-schedule">
+                        <div class="admin-panel-header">
+                            <h3>📅 Lịch làm việc theo ngày</h3>
+                        </div>
+                        <div class="daily-sch-controls">
+                            <button class="btn btn-secondary" id="btn-daily-prev">◀</button>
+                            <span id="daily-date-label" style="font-weight:600;min-width:200px;text-align:center"></span>
+                            <button class="btn btn-secondary" id="btn-daily-next">▶</button>
+                            <button class="btn btn-secondary" id="btn-daily-today">Hôm nay</button>
+                            <button class="btn btn-primary" id="btn-daily-save">💾 Lưu ngày này</button>
+                        </div>
+                        <div class="admin-table-wrap">
+                            <table class="admin-table" id="daily-sch-table">
+                                <thead><tr><th>Mã NV</th><th>Họ tên</th><th>Ca làm việc</th><th>Nhanh</th></tr></thead>
+                                <tbody id="daily-sch-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- General Settings Panel -->
+                    <div class="admin-panel" id="admin-panel-general">
+                        <div class="admin-panel-header">
+                            <h3>⚙️ Cài đặt chung</h3>
+                        </div>
+
+                        <!-- Login Notification -->
+                        <div class="settings-section">
+                            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
+                                <div>
+                                    <h4 class="settings-section-title" style="margin-bottom:4px">🔔 Thông báo đăng nhập thiết bị mới</h4>
+                                    <p style="font-size:.82rem;color:var(--text3);margin:0">Hiển thị cảnh báo real-time khi có nhân viên đăng nhập từ thiết bị chưa từng dùng</p>
+                                </div>
+                                <label class="toggle-switch" style="flex-shrink:0;margin-top:4px">
+                                    <input type="checkbox" id="toggle-login-notify">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+
+                            <!-- Login History -->
+                            <div style="margin-top:20px">
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                                    <span style="font-size:.85rem;font-weight:600;color:var(--text2)">📜 Lịch sử đăng nhập gần đây</span>
+                                    <button class="btn btn-secondary btn-sm" id="btn-refresh-logins">🔄 Tải lại</button>
+                                </div>
+                                <div class="admin-table-wrap">
+                                    <table class="admin-table" id="login-log-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Nhân viên</th>
+                                                <th>Thời gian</th>
+                                                <th>Thiết bị</th>
+                                                <th>Trạng thái</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="login-log-body">
+                                            <tr><td colspan="4" style="text-align:center;padding:30px;color:var(--text3)">Đang tải...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="nav-divider" style="margin: 25px 0"></div>
+
+                            <!-- Data Cleanup -->
+                            <div>
+                                <h4 class="settings-section-title" style="margin-bottom:8px">🧹 Dọn dẹp dữ liệu lịch làm việc</h4>
+                                <p style="font-size:.82rem;color:var(--text3);margin-bottom:15px">Xóa lịch sử làm việc của tháng cũ để dọn dẹp bộ nhớ. <b>Hành động này không thể hoàn tác!</b></p>
+                                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+                                    <input type="month" id="cleanup-month" class="form-input" style="width:auto;min-width:180px">
+                                    <button class="btn btn-danger" id="btn-cleanup-data">Xóa dữ liệu tháng này</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!-- /#admin-dashboard -->
+            </div><!-- /.page-container -->
+        </main>
+    </div><!-- /#app -->
+
+
+    <!-- Confirm Modal -->
+    <div id="confirm-modal" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="confirm-dialog">
+            <div class="confirm-glow"></div>
+            <div class="confirm-icon-wrap">
+                <div class="confirm-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="confirm-title">Xác nhận</div>
+            <div class="confirm-message" id="confirm-message">Bạn có chắc chắn?</div>
+            <div class="confirm-actions">
+                <button class="confirm-btn confirm-btn-cancel" id="confirm-cancel">Hủy</button>
+                <button class="confirm-btn confirm-btn-ok" id="confirm-ok">Đồng ý</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shift Registration Modal -->
+    <div id="register-modal" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3>📝 Đăng ký ca làm tuần sau</h3>
+                <button class="modal-close" id="register-modal-close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="registration-form" id="registration-days-container"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="register-modal-cancel">Hủy</button>
+                <button class="btn btn-primary" id="btn-submit-registration">Gửi yêu cầu</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Streak Details Modal -->
+    <div id="streak-modal" class="modal hidden">
+        <div class="modal-backdrop" id="streak-modal-backdrop"></div>
+        <div class="modal-content modal-md" style="max-width: 420px; background: #1a1f35; border: 1px solid rgba(251, 191, 36, 0.4); box-shadow: 0 0 30px rgba(251, 191, 36, 0.15); border-radius: 20px;">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 14px; display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <h3 style="display:flex; align-items:center; gap:8px; margin:0; font-size:1.15rem; color:#fbbf24;">
+                    🔥 Thành Tích Streak Đi Làm
+                </h3>
+                <button class="modal-close" id="streak-modal-close" style="color:var(--text3); border:none; background:none; font-size:1.2rem; cursor:pointer;">✕</button>
+            </div>
+            <div class="modal-body" style="padding-top: 20px;">
+                <div style="text-align: center; margin-bottom: 24px; position: relative;">
+                    <div style="font-size: 4rem; animation: pulse 1.5s infinite; filter: drop-shadow(0 0 12px rgba(251,191,36,0.5)); margin-bottom: 10px;">🔥</div>
+                    <h1 id="streak-modal-count" style="font-size: 2.2rem; font-weight: 800; color: #fff; margin: 0;">0 ngày</h1>
+                    <p style="color: var(--text2); font-size: 0.88rem; margin: 4px 0 0;">Chuỗi ngày đi làm liên tục hiện tại của bạn</p>
+                </div>
+
+                <div class="savings-card" style="padding: 16px; margin-bottom: 18px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius:12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+                        <span style="font-size:0.8rem; color:var(--text2); font-weight:600; text-transform:uppercase;">Huy hiệu hiện tại</span>
+                        <span class="status-indicator status-safe" id="streak-badge-level" style="background:rgba(251,191,36,0.15); color:#fbbf24; border:1px solid rgba(251,191,36,0.3); font-size:0.75rem;">Đang tải...</span>
+                    </div>
+                    <div style="font-size:0.85rem; color:var(--text2); line-height:1.5;" id="streak-badge-desc">
+                        Hãy tiếp tục duy trì để mở khóa các mốc mới!
+                    </div>
+                </div>
+
+                <div class="shelf-life-progress" style="margin-bottom: 20px;">
+                    <div class="progress-meta">
+                        <span id="streak-xp-label">Tiến trình cấp tiếp theo:</span>
+                        <span id="streak-xp-percent" style="font-weight: 700;">0%</span>
+                    </div>
+                    <div class="progress-bar" style="margin-bottom: 0;">
+                        <div class="progress-fill" id="streak-xp-fill" style="width: 0%; background: linear-gradient(90deg, #fbbf24, #f59e0b);"></div>
+                    </div>
+                </div>
+
+                <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 16px;">
+                    <h4 style="margin: 0 0 12px; font-size: 0.85rem; text-transform: uppercase; color: var(--text3); letter-spacing: 0.5px;">Bảng thành tích của bạn:</h4>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                        <div style="background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.03); padding:10px 14px; border-radius:10px;">
+                            <span style="font-size:0.75rem; color:var(--text3); display:block; margin-bottom:2px;">Kỷ lục chuỗi ca</span>
+                            <strong style="font-size:1.05rem; color:#fff;" id="streak-record">-- ngày</strong>
+                        </div>
+                        <div style="background:rgba(255,255,255,0.01); border:1px solid rgba(255,255,255,0.03); padding:10px 14px; border-radius:10px;">
+                            <span style="font-size:0.75rem; color:var(--text3); display:block; margin-bottom:2px;">Tổng ca đã làm (30 ngày)</span>
+                            <strong style="font-size:1.05rem; color:#fff;" id="streak-total-shifts">-- ca</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px; margin-top: 14px;">
+                <button class="btn btn-secondary btn-full" id="streak-modal-close-btn">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Avatar Selection Modal -->
+    <div id="avatar-modal" class="modal hidden">
+        <div class="modal-backdrop" id="avatar-modal-backdrop"></div>
+        <div class="modal-content modal-sm" style="max-width: 360px; background: #1a1f35; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+            <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px; display:flex; justify-content:space-between; align-items:center; width:100%;">
+                <h3 style="margin: 0; font-size: 1.15rem; color: #fff;">🎭 Chọn Ảnh Đại Diện</h3>
+                <button class="modal-close" id="avatar-modal-close" style="color:var(--text3); border:none; background:none; font-size:1.2rem; cursor:pointer;">✕</button>
+            </div>
+            <div class="modal-body" style="padding-top: 15px;">
+                <p style="color: var(--text3); font-size: 0.85rem; margin-bottom: 15px;">Chọn biểu tượng phù hợp hiển thị làm avatar của bạn:</p>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;" id="avatar-choices-grid">
+                    <!-- Dynamically populated -->
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px; margin-top: 12px;">
+                <button class="btn btn-secondary btn-full" id="avatar-modal-cancel">Hủy bỏ</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="data.js"></script>
+    <script src="auth.js"></script>
+    <script src="app.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

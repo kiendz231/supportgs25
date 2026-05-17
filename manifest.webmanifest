@@ -1,0 +1,37 @@
+{
+  "name": "GS25 Staff Hub",
+  "short_name": "GS25 Hub",
+  "description": "Cong cu ho tro nhan vien GS25 theo doi lich lam, checklist va ghi chu ca.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0a0e1a",
+  "theme_color": "#0d1117",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "pwa-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "pwa-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Checklist ca",
+      "short_name": "Checklist",
+      "url": "./index.html#checklist"
+    },
+    {
+      "name": "Lich lam viec",
+      "short_name": "Lich",
+      "url": "./index.html#schedule"
+    }
+  ]
+}
