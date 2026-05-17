@@ -703,7 +703,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);b
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 50px;
-  padding: 8px 16px;
+  padding: 8px 0; /* Removed horizontal padding to ensure perfect 20% math for children */
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
   padding-bottom: 8px; /* Override safe area for floating pill */
 }
@@ -744,8 +744,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);b
 .bn-indicator {
   position: absolute;
   top: 50%;
-  /* Calculate exact position considering the 16px left/right padding (32px total) on the container */
-  left: calc(16px + (var(--active-index, 0) * ((100% - 32px) / 5)) + ((100% - 32px) / 10));
+  left: calc(var(--active-index, 0) * 20% + 10%);
   transform: translate(-50%, -50%);
   width: 48px;
   height: 48px;
