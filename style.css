@@ -760,6 +760,10 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);b
 }
 
 .bn-item .bn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
   font-size: 1.3rem;
   color: #6b7280; /* Gray when inactive */
   z-index: 1;
@@ -798,7 +802,9 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);b
   .bottom-nav .bn-icon { font-size: 1.15rem; }
 
   /* Page container: leave generous room for bottom nav */
-  .page-container{padding:16px 14px 140px;-webkit-overflow-scrolling:touch}
+  .page-container{padding:16px 14px 20px;-webkit-overflow-scrolling:touch}
+  /* Bulletproof scroll space enforcement for mobile browsers */
+  .page-container::after { content: ''; display: block; height: 120px; flex-shrink: 0; }
 
   /* Auth */
   .auth-card{padding:24px 20px}
