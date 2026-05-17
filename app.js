@@ -374,6 +374,36 @@ function setupNav() {
       navigateTo(btn.dataset.page);
     });
   });
+
+  // Enable drag-to-switch tabs (Swipe interaction)
+  const bottomNav = $('#bottom-nav');
+  if (bottomNav) {
+    let isDragging = false;
+    
+    // Mouse support
+    bottomNav.addEventListener('mousedown', () => isDragging = true);
+    window.addEventListener('mouseup', () => isDragging = false);
+    bottomNav.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      const bnItem = el?.closest('.bn-item');
+      if (bnItem && bnItem.dataset.page && !bnItem.classList.contains('active')) {
+        navigateTo(bnItem.dataset.page);
+      }
+    });
+
+    // Touch support (Mobile)
+    bottomNav.addEventListener('touchmove', (e) => {
+      e.preventDefault(); // Prevent scrolling while swiping tabs
+      const touch = e.touches[0];
+      if (!touch) return;
+      const el = document.elementFromPoint(touch.clientX, touch.clientY);
+      const bnItem = el?.closest('.bn-item');
+      if (bnItem && bnItem.dataset.page && !bnItem.classList.contains('active')) {
+        navigateTo(bnItem.dataset.page);
+      }
+    }, { passive: false });
+  }
 }
 
 // ===== SCHEDULE =====
