@@ -249,6 +249,18 @@ const Auth = (function() {
         window.applyAppTheme(currentUser.theme);
       }
     }
+
+    // Toggle Admin Panel visibility
+    const adminNav = document.getElementById('nav-admin');
+    if (adminNav) {
+      const isManager = currentUser.role === 'Admin' || currentUser.role === 'Quản lý' ||
+        (currentUser.position && (currentUser.position.includes('trưởng') || currentUser.position.includes('phó')));
+      if (isManager) {
+        adminNav.classList.remove('hidden');
+      } else {
+        adminNav.classList.add('hidden');
+      }
+    }
   }
   window.updateSidebarUser = updateSidebarUser;
 
