@@ -1003,21 +1003,21 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);b
 @media (max-width: 768px) {
   .welcome-section { flex-direction: column; gap: 16px; margin-bottom: 20px; }
   .dashboard-widgets { 
-    width: calc(100% + 28px); 
-    margin-left: -14px; 
-    padding: 0 14px 14px; 
-    overflow-x: auto; 
-    scroll-snap-type: x mandatory; 
-    scrollbar-width: none; 
-    -ms-overflow-style: none;
-    display: flex;
-    flex-wrap: nowrap;
+    width: 100%; 
+    margin-left: 0; 
+    padding: 0 0 14px 0; 
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
   }
   .dashboard-widgets::-webkit-scrollbar { display: none; }
   .dash-widget { 
-    min-width: unset; 
-    flex: 0 0 75%; 
-    scroll-snap-align: center; 
+    flex: unset;
+    padding: 14px 12px;
+  }
+  .dash-widget:nth-child(3) {
+    grid-column: span 2;
+  } 
     background: linear-gradient(145deg, rgba(30,41,59,0.7), rgba(17,24,39,0.8));
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
