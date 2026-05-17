@@ -786,9 +786,19 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);b
   .sidebar-close{display:block}
   .main-content{margin-left:0;height:100vh}
   .menu-toggle{display:flex}
-  .bottom-nav{display:flex}
-  /* Page container: leave room for bottom nav */
-  .page-container{padding:16px 14px 110px;-webkit-overflow-scrolling:touch}
+  .bottom-nav {
+    display: flex;
+    bottom: 12px;
+    width: calc(100% - 24px);
+    padding: 6px 0;
+  }
+  .bottom-nav .bn-item { height: 46px; }
+  .bottom-nav .bn-indicator { width: 40px; height: 40px; }
+  .bottom-nav .bn-item::after { width: 40px; height: 40px; }
+  .bottom-nav .bn-icon { font-size: 1.15rem; }
+
+  /* Page container: leave generous room for bottom nav */
+  .page-container{padding:16px 14px 140px;-webkit-overflow-scrolling:touch}
 
   /* Auth */
   .auth-card{padding:24px 20px}
